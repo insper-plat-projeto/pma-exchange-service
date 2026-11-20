@@ -68,3 +68,14 @@ def test_unknown_pair_is_not_found(get):
 def test_provider_down_is_bad_gateway(get):
     response = client.get("/exchanges/USD/EUR", headers=HEADERS)
     assert response.status_code == 502
+
+
+@patch("main.requests.get", return_value=provider(body=USD_EUR))
+def test_metrics_count_requests_by_route(get):
+    client.get("/exchanges/USD/EUR", headers=HEADERS)
+
+    response = client.get("/exchanges/metrics")
+
+    assert response.status_code == 200
+    # labelled by the route template, not by each currency pair
+    assert 'handler="/exchanges/{from_currency}/{to_currency}"' in response.text
