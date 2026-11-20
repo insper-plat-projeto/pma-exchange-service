@@ -9,6 +9,7 @@ from typing import Annotated
 
 import requests
 from fastapi import FastAPI, Header, HTTPException, Path
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # third-party API: GET {URL}/USD-EUR -> {"USDEUR": {"bid": ..., "ask": ..., "create_date": ...}}
 AWESOMEAPI_URL = os.getenv(
@@ -20,6 +21,10 @@ TIMEOUT_SECONDS = float(os.getenv("AWESOMEAPI_TIMEOUT", "5"))
 Currency = Annotated[str, Path(pattern=r"^[A-Za-z]{3}$")]
 
 app = FastAPI(title="exchange-service")
+
+# metrics in Prometheus format, under the service prefix like the Spring services
+# (/accounts/actuator/prometheus): request count and latency per route, plus process stats
+Instrumentator().instrument(app).expose(app, endpoint="/exchanges/metrics")
 
 
 @app.get("/exchanges/health-check")

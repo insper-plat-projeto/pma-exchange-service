@@ -8,6 +8,7 @@ Microsserviço de câmbio da plataforma (Python + FastAPI). Devolve a cotação 
 |---|---|---|
 | GET | `/exchanges/{from}/{to}` | `200 {"sell", "buy", "date", "id-account"}` |
 | GET | `/exchanges/health-check` | `200 {"status": "up"}` |
+| GET | `/exchanges/metrics` | métricas no formato do Prometheus (requisições e latência por rota) |
 
 ```json
 GET /exchanges/USD/EUR
